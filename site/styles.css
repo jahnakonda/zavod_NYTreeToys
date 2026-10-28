@@ -1,0 +1,216 @@
+/* Ёлочные игрушки: мастера и фабрики — сайт-прототип.
+   Палитра: бумага + хвоя + бронза. Шрифты локально (fonts/). */
+
+:root{
+  --paper:#F8F5ED;
+  --card:#FFFDF7;
+  --ink:#263029;
+  --mut:#6D7366;
+  --pine:#2E5941;
+  --pine-deep:#20412F;
+  --bronze:#8F6B23;
+  --gold:#C89B3C;
+  --line:#E4DDCB;
+  --line2:#D6CCB4;
+  --serif:"Playfair Display",Georgia,serif;
+  --sans:"Manrope",system-ui,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{font:16px/1.65 var(--sans);background:var(--paper);color:var(--ink);padding-block:0}
+img{max-width:100%;display:block}
+a{color:var(--bronze)}
+.wrap{max-width:1120px;margin-inline:auto;padding-inline:22px}
+
+/* ── Шапка ─────────────────────────── */
+.top{position:sticky;top:0;z-index:20;background:rgba(248,245,237,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.top-in{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:14px}
+.brand{display:flex;align-items:baseline;gap:10px;text-decoration:none;color:var(--ink)}
+.brand b{font:600 20px var(--serif);letter-spacing:.2px}
+.brand span{font-size:12.5px;color:var(--mut)}
+.nav{display:flex;gap:22px;align-items:center}
+.nav a{font-size:14.5px;color:var(--ink);text-decoration:none}
+.nav a:hover{color:var(--bronze)}
+.nav a.on{color:var(--bronze);font-weight:600}
+.top-soc{display:flex;gap:10px}
+.top-soc a{font-size:13px;text-decoration:none;color:var(--pine);border:1px solid var(--line2);border-radius:99px;padding:4px 12px}
+.top-soc a:hover{background:var(--pine);color:#fff;border-color:var(--pine)}
+.burger{display:none;background:none;border:0;cursor:pointer;padding:8px}
+.burger span{display:block;width:22px;height:2px;background:var(--ink);margin:5px 0;border-radius:2px}
+
+/* ── Hero ─────────────────────────── */
+.hero{padding-block:64px 26px}
+.hero-in{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:2.2px;text-transform:uppercase;color:var(--bronze);margin-bottom:14px}
+.hero h1{font:600 44px/1.18 var(--serif);letter-spacing:.2px}
+.hero h1 em{font-style:italic;color:var(--pine)}
+.hero .lead{font-size:17px;color:var(--mut);margin-top:16px;max-width:46ch}
+.hero-cta{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
+.btn{display:inline-block;text-decoration:none;font-weight:600;font-size:14.5px;border-radius:99px;padding:12px 24px}
+.btn-solid{background:var(--pine);color:#fff}
+.btn-solid:hover{background:var(--pine-deep)}
+.btn-ghost{border:1px solid var(--line2);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--bronze);color:var(--bronze)}
+.hero-figure{position:relative}
+.hero-figure img{border-radius:18px;aspect-ratio:4/3;object-fit:cover}
+.hero-figure::after{content:"";position:absolute;inset:14px -14px -14px 14px;border:1.5px solid var(--gold);border-radius:18px;z-index:-1}
+.hero-meta{margin-top:14px;font-size:13px;color:var(--mut)}
+.hero-meta b{color:var(--ink);font-weight:600}
+
+/* ── Полоса фактов ─────────────────── */
+.facts{display:grid;grid-template-columns:repeat(4,1fr);border-block:1px solid var(--line2);margin-block:34px}
+.facts div{padding:22px 18px;text-align:center}
+.facts div+div{border-left:1px solid var(--line2)}
+.facts b{display:block;font:600 26px var(--serif);color:var(--pine)}
+.facts span{font-size:12.5px;color:var(--mut);letter-spacing:.4px;text-transform:uppercase}
+
+/* ── Секции ───────────────────────── */
+section{padding-block:54px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:26px;flex-wrap:wrap}
+.sec-head h2{font:600 30px var(--serif)}
+.sec-head a{font-size:14px;font-weight:600;text-decoration:none}
+
+/* Рубрики — редакционный нумерованный список */
+.rubs{display:grid;grid-template-columns:1fr 1fr;gap:0 56px}
+.rub{display:grid;grid-template-columns:44px 1fr;gap:14px;padding-block:20px;border-top:1px solid var(--line2)}
+.rub i{font-style:normal;font:600 15px var(--serif);color:var(--gold)}
+.rub h3{font:600 19px var(--serif);margin-bottom:4px}
+.rub p{font-size:14px;color:var(--mut)}
+
+/* Свежие материалы: 1 крупный + 2 компактных */
+.posts{display:grid;grid-template-columns:1.25fr 1fr;grid-template-rows:auto auto;gap:22px}
+.postc{display:block;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;text-decoration:none;color:var(--ink);transition:box-shadow .25s}
+.postc:hover{box-shadow:0 10px 30px rgba(38,48,41,.1)}
+.postc img{aspect-ratio:16/10;object-fit:cover;width:100%}
+.postc.big{grid-row:1/3;display:flex;flex-direction:column}
+.postc.big img{aspect-ratio:auto;height:100%;object-fit:cover;flex:1;min-height:0}
+.postc.big .pc-body{flex:0 0 auto}
+.postc .pc-body{padding:18px 20px 22px}
+.pc-meta{font-size:12px;color:var(--bronze);font-weight:600;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px}
+.postc h3{font:600 20px var(--serif);margin-bottom:8px}
+.postc.big h3{font-size:25px}
+.postc p{font-size:14px;color:var(--mut)}
+
+/* Каталог-тизер — строки списка */
+.tz{border-top:1px solid var(--line2)}
+.tz a{display:grid;grid-template-columns:2fr 1.4fr 1.6fr auto;gap:14px;align-items:baseline;padding-block:15px;border-bottom:1px solid var(--line2);text-decoration:none;color:var(--ink)}
+.tz a:hover{background:var(--card)}
+.tz .n{font:600 17px var(--serif)}
+.tz .c{font-size:13.5px;color:var(--mut)}
+.tz .t{font-size:13px;color:var(--pine)}
+.tz .a{color:var(--bronze);font-size:14px}
+.tz-more{text-align:center;margin-top:22px}
+
+/* ── Подписка ─────────────────────── */
+.subs{background:var(--pine-deep);border-radius:20px;color:#EDF3EA;padding:44px 48px;margin-block:10px 20px}
+.subs h2{font:600 29px var(--serif);color:#fff}
+.subs p{color:#B9C9B6;font-size:14.5px;margin-top:8px;max-width:52ch}
+.subs form{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+.subs input{flex:1;min-width:240px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.22);border-radius:99px;color:#fff;padding:12px 20px;font:inherit;font-size:14.5px}
+.subs input::placeholder{color:#8FA58C}
+.subs input:focus{outline:2px solid var(--gold);outline-offset:1px}
+.subs .btn-solid{background:var(--gold);color:#33290D}
+.subs .btn-solid:hover{background:#D9B052}
+.subs .alt{margin-top:16px;font-size:13.5px;color:#B9C9B6}
+.subs .alt a{color:var(--gold)}
+.subs-msg{margin-top:10px;font-size:14px;color:#F5E4B8;min-height:1em}
+
+/* ── Футер ─────────────────────────── */
+footer{background:var(--pine-deep);color:#B9C9B6;margin-top:56px}
+.foot-in{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:36px;padding-block:44px}
+.foot-in h4{font:600 18px var(--serif);color:#fff;margin-bottom:10px}
+.foot-in a{color:#B9C9B6;text-decoration:none;font-size:14px;display:block;padding-block:3px}
+.foot-in a:hover{color:var(--gold)}
+.foot-in p{font-size:13.5px}
+.foot-bot{border-top:1px solid rgba(255,255,255,.12);padding-block:16px;font-size:12.5px;color:#8FA58C;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.foot-bot a{color:#B9C9B6}
+
+/* ── Каталог ───────────────────────── */
+.page-head{padding-block:46px 8px}
+.page-head h1{font:600 36px var(--serif);margin-bottom:10px}
+.page-head p{color:var(--mut);max-width:60ch}
+.discl{margin-block:18px;background:var(--card);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:12px 16px;font-size:13.5px;color:var(--mut)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-block:18px 8px}
+.chip{background:none;border:1px solid var(--line2);border-radius:99px;padding:7px 16px;font:inherit;font-size:13.5px;cursor:pointer;color:var(--ink)}
+.chip:hover{border-color:var(--bronze);color:var(--bronze)}
+.chip.on{background:var(--pine);border-color:var(--pine);color:#fff;font-weight:600}
+.chips-n{font-size:13px;color:var(--mut);margin:8px 0 4px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;padding-block:18px 40px}
+.fcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:8px}
+.fcard .fc-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.fbadge{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--pine);border:1px solid var(--line2);border-radius:6px;padding:2px 8px;white-space:nowrap}
+.fcard h3{font:600 19px var(--serif)}
+.fcard .fc-geo{font-size:13px;color:var(--mut)}
+.fcard .fc-geo b{color:var(--gold);font-weight:600}
+.fc-tech{display:flex;gap:6px;flex-wrap:wrap}
+.fc-tech i{font-style:normal;font-size:12px;color:var(--pine);background:#EDF2EA;border-radius:6px;padding:2px 8px}
+.fcard p{font-size:13.5px;color:var(--mut)}
+.fc-links{display:flex;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:8px}
+.fc-links a{font-size:13px;text-decoration:none;color:var(--bronze);border-bottom:1px solid transparent}
+.fc-links a:hover{border-color:var(--bronze)}
+.fc-extra{font-size:12.5px;color:var(--mut);border-top:1px dashed var(--line2);padding-top:8px}
+.fc-extra b{font-weight:600;color:var(--ink)}
+
+/* ── Блог ─────────────────────────── */
+.art{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-bottom:26px}
+.art>img{width:100%;aspect-ratio:21/10;object-fit:cover}
+.art-body{padding:26px 30px 30px}
+.art-meta{display:flex;gap:14px;font-size:12.5px;color:var(--mut);margin-bottom:10px;flex-wrap:wrap}
+.art-meta .rub-tag{color:var(--bronze);font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.art h2{font:600 26px var(--serif);margin-bottom:12px}
+.art .intro{font-size:16px;color:var(--ink)}
+.art details{margin-top:8px}
+.art summary{cursor:pointer;list-style:none;display:inline-block;font-weight:600;font-size:14.5px;color:var(--bronze);margin-top:12px}
+.art summary::-webkit-details-marker{display:none}
+.art summary::after{content:" ↓"}
+.art details[open] summary::after{content:" ↑"}
+.art .art-full{margin-top:14px;font-size:15px;color:#3A443C}
+.art .art-full p+p{margin-top:12px}
+.art .src{margin-top:14px;font-size:13.5px;color:var(--mut)}
+
+/* ── О проекте ────────────────────── */
+.about-cols{display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:start}
+.about-cols p{margin-bottom:14px;font-size:15.5px;color:#3A443C}
+.about-cols .quote{border-left:3px solid var(--gold);padding:6px 0 6px 18px;font:italic 600 19px var(--serif);color:var(--pine);margin-block:18px 22px}
+.mini-facts{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.mini-facts div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.mini-facts b{display:block;font:600 24px var(--serif);color:var(--pine)}
+.mini-facts span{font-size:12.5px;color:var(--mut)}
+.soc-row{display:flex;gap:12px;margin-top:18px;flex-wrap:wrap}
+
+/* ── Появление при скролле ─────────── */
+.rv{opacity:0;transform:translateY(14px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+
+/* ── Адаптив ──────────────────────── */
+@media(max-width:960px){
+  .hero-in{grid-template-columns:1fr;gap:30px}
+  .hero h1{font-size:36px}
+  .facts{grid-template-columns:repeat(2,1fr)}
+  .facts div:nth-child(3){border-left:0}
+  .facts div:nth-child(n+3){border-top:1px solid var(--line2)}
+  .rubs{grid-template-columns:1fr}
+  .posts{grid-template-columns:1fr}
+  .postc.big{grid-row:auto;display:block}
+  .postc.big img{height:auto;min-height:240px}
+  .tz a{grid-template-columns:1fr auto;grid-template-rows:auto auto}
+  .tz .c{grid-column:1}.tz .t{grid-column:1}
+  .about-cols{grid-template-columns:1fr}
+  .foot-in{grid-template-columns:1fr;gap:24px}
+}
+@media(max-width:640px){
+  .nav{position:fixed;inset:0;background:var(--paper);flex-direction:column;justify-content:center;font-size:20px;gap:26px;transform:translateY(-100%);transition:transform .3s;z-index:19}
+  .nav.open{transform:none}
+  .burger{display:block;z-index:21}
+  .top-soc{display:none}
+  .hero{padding-block:40px 10px}
+  .hero h1{font-size:30px}
+  .subs{padding:30px 22px}
+  .subs h2{font-size:23px}
+  section{padding-block:38px}
+  .art-body{padding:20px}
+  .page-head h1{font-size:28px}
+}

@@ -1,0 +1,493 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>NYTreeToys — панель управления</title>
+<style>
+  :root { --bg:#12151c; --card:#1b2029; --line:#2a3140; --txt:#e8ecf3; --mut:#8d97ab;
+          --acc:#e0a458; --ok:#5fb87a; --err:#e06a6a; --run:#5b8ee0; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:var(--bg); color:var(--txt); font:14px/1.5 system-ui, "Segoe UI", sans-serif;
+         padding:24px 18px 60px; max-width:1100px; margin-inline:auto; }
+  h1 { font-size:19px; margin-bottom:2px; }
+  h2 { font-size:15px; margin:26px 0 10px; color:var(--acc); text-transform:uppercase;
+       letter-spacing:.06em; }
+  .sub { color:var(--mut); font-size:12.5px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+  .cardtop { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:720px){ .cardtop { grid-template-columns:1fr; } }
+  button { background:var(--acc); border:0; color:#151312; font-weight:600; padding:7px 13px;
+           border-radius:8px; cursor:pointer; font-size:13px; }
+  button:hover { filter:brightness(1.1); }
+  button.ghost { background:transparent; color:var(--txt); border:1px solid var(--line); font-weight:400; }
+  button.ghost:hover { border-color:var(--acc); color:var(--acc); }
+  button:disabled { opacity:.5; cursor:default; }
+  input[type=text], input[type=date], input[type=datetime-local], select {
+    background:#12151c; border:1px solid var(--line); color:var(--txt); border-radius:8px;
+    padding:7px 9px; font:inherit; }
+  input:focus, select:focus { outline:none; border-color:var(--acc); }
+  input[type=date] { width:130px; }
+  input[type=text] { width:100%; }
+  button.ghost.pc-date { background:#0d0f14; color:var(--txt); text-align:left; }
+  button.ghost.pc-date:hover { border-color:var(--acc); color:var(--acc); }
+  #cal { position:fixed; z-index:50; background:var(--card); border:1px solid var(--line);
+         border-radius:10px; padding:10px; box-shadow:0 8px 24px rgba(0,0,0,.45); width:252px; }
+  #cal-head { display:flex; align-items:center; justify-content:space-between; gap:6px; }
+  #cal-head button { padding:2px 12px; }
+  #cal-month { font-weight:600; }
+  #cal-dow, #cal-days { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; text-align:center; }
+  #cal-dow { color:var(--mut); font-size:11px; margin:8px 0 4px; }
+  #cal-days button { background:transparent; color:var(--txt); border:0; border-radius:6px;
+                     padding:6px 0; cursor:pointer; font:inherit; }
+  #cal-days button:hover { background:#2a3140; color:var(--txt); }
+  #cal-days button.sel { background:var(--acc); color:#151312; font-weight:600; }
+  #cal-days button:disabled { opacity:.25; cursor:default; background:transparent; }
+  label.cb { color:var(--mut); display:inline-flex; gap:6px; align-items:center; margin-right:14px; cursor:pointer; }
+  .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th { text-align:left; color:var(--mut); font-weight:500; font-size:11.5px; text-transform:uppercase;
+       letter-spacing:.05em; padding:6px 8px; border-bottom:1px solid var(--line); }
+  td { padding:8px; border-bottom:1px solid var(--line); vertical-align:top; }
+  .when { display:flex; gap:8px; width:100%; align-items:center; }
+  .pc-date { flex:1; min-width:118px; white-space:nowrap; }
+  .pc-time { flex:1; min-width:98px; }
+  .pc-go { flex:0 0 auto; }
+  .chip { display:inline-block; padding:2px 9px; border-radius:20px; font-size:11.5px; font-weight:600; }
+  .running { background:#233a63; color:var(--run); }
+  .done { background:#1d3828; color:var(--ok); }
+  .pending { background:#2c2d3f; color:#a8b0c8; }
+  .failed { background:#42262a; color:var(--err); }
+  .cancelled { background:#2a2a2a; color:var(--mut); }
+  .publishing { background:#23394b; color:#7cc3e8; }
+  .draft { background:#3a3323; color:var(--acc); }
+  .pv > td { background:#141821; padding:14px 16px; }
+  .pv .cols { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:720px){ .pv .cols { grid-template-columns:1fr; } }
+  .pv h4 { font-size:12px; color:var(--mut); text-transform:uppercase; letter-spacing:.05em; margin:8px 0 4px; }
+  .pv .txt { white-space:pre-wrap; font-size:13px; line-height:1.55; }
+  .pv .imgs { display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:10px; margin-top:6px; }
+  .pv figure { margin:0; background:var(--card); border:1px solid var(--line); border-radius:8px; padding:8px; }
+  .pv img { max-width:100%; display:block; border-radius:6px; }
+  .pv figcaption { font-size:11.5px; color:var(--mut); margin-top:6px; }
+  pre { background:#0d0f14; border:1px solid var(--line); border-radius:10px; padding:12px;
+        font:12px/1.5 Consolas, monospace; white-space:pre-wrap; word-break:break-word;
+        max-height:320px; overflow-y:auto; margin-top:10px; color:#c8d2e2; }
+  .err { color:var(--err); font-size:12.5px; margin-top:8px; white-space:pre-wrap; }
+  .prog-item { background:var(--card); border:1px solid var(--line); border-radius:12px;
+               padding:12px 14px; margin-bottom:10px; }
+  .bar { height:6px; background:#2a3140; border-radius:4px; margin:8px 0 6px; }
+  .bar > i { display:block; height:100%; background:var(--acc); border-radius:4px;
+             transition:width .5s; }
+  .note { background:#26221a; border:1px solid #4a3d22; border-radius:10px; padding:10px 13px;
+          font-size:12.5px; color:#cdb98a; margin-top:14px; }
+  a { color:var(--run); }
+  .runs td:first-child { color:var(--mut); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  details summary { cursor:pointer; color:var(--mut); font-size:12.5px; }
+  td .when { display:flex; gap:6px; }
+</style>
+
+<h1>NYTreeToys · панель управления</h1>
+<div class="sub">время сервера: <span id="now">…</span> · паблик-воркер: <span id="pub">…</span></div>
+
+<h2>Ход работы</h2>
+<div id="prog"><div class="sub">ничего не запущено</div></div>
+
+<h2>Выбор карточки для публикации <span class="sub" id="cards-sum"></span></h2>
+<div class="card" style="padding:6px 10px">
+  <table>
+    <thead><tr><th style="width:60%">Карточка</th><th>Город</th><th style="width:200px">Пост</th></tr></thead>
+    <tbody id="todo-body"></tbody>
+  </table>
+  <div class="sub" style="padding:8px 8px 4px">«Сформировать пост»: продюсер напишет пост по карточке
+    (writer → editor → фото из источников, без ComfyUI) и он появится в «Очереди публикаций» —
+    там выбираешь дату, время и площадки, проверяешь и жмёшь «Опубликовать».</div>
+  <div id="card-err" class="err" style="padding:0 8px" hidden></div>
+</div>
+
+<h2>Очередь публикаций</h2>
+<div class="card">
+  <div class="sub">Посты, сформированные продюсером. Проверь текст и картинки, при желании
+    сдвинь дату/время и площадки — публикация пройдёт в выбранное время сама;
+    <b>Опубликовать сейчас</b> выпускает немедленно (до 20 сек). «Сайт» включён по умолчанию —
+    пост выйдет сразу на все три площадки; ненужную галочку сними. Не готов выпускать —
+    жми «Отложить», пост переедет в блок ниже. Без VPN ТГ не отправится —
+    задача станет «не удалось», жми «Повторить» с включённым VPN. Автоповторов нет.</div>
+  <div id="q-err" class="err" hidden></div>
+  <table style="margin-top:14px" id="q-table" hidden>
+    <thead><tr><th>Пост</th><th>Дата и время</th><th>Площадки</th><th></th></tr></thead>
+    <tbody id="q-body"></tbody>
+  </table>
+  <div id="q-empty" class="sub" style="margin-top:12px">очередь пуста — она заполнится после удачного прогона «Сформировать пост»</div>
+</div>
+
+<h2>Отложенные публикации</h2>
+<div class="card">
+  <div class="sub">Посты, которые ты отложил: планировщик их не трогает, заново формировать
+    не нужно. «Вернуть в очередь» возвращает пост в редактирование — заново выбери дату,
+    время и площадки. Если запланированное время уже прошло, вернётся на завтра 18:00.</div>
+  <table style="margin-top:14px" id="d-table" hidden>
+    <thead><tr><th>Пост</th><th>Было запланировано</th><th>Площадки</th><th></th></tr></thead>
+    <tbody id="d-body"></tbody>
+  </table>
+  <div id="d-empty" class="sub" style="margin-top:12px">отложенных постов нет</div>
+</div>
+
+<h2>Опубликованные</h2>
+<table>
+  <thead><tr><th>Заголовок</th><th>Пост</th><th>Когда</th><th>Ссылки</th></tr></thead>
+  <tbody id="pub-body"></tbody>
+</table>
+
+<h2>Сайт</h2>
+<div class="cardtop">
+  <div class="card">
+    <b>GitHub Pages</b> <span class="sub">— jahnakonda.github.io/nytoys-site: блог и «Свежие истории» собираются из <u>опубликованных</u> постов (черновики на сайт не попадают). «Обновить сайт» = пересборка + линк-чекер + деплой (коммит+push).</span>
+    <div class="row" style="margin-top:10px">
+      <button id="btn-deploy">Обновить сайт</button>
+      <a href="https://jahnakonda.github.io/nytoys-site/" target="_blank" class="sub">открыть сайт ↗</a>
+    </div>
+  </div>
+  <div class="card">
+    <b>Исследователь</b>
+    <p class="sub">Обслуживание базы фабрик: закрыть [уточнить], добавить 2–5 новых карточек, коммит. Задание — research/cron-task.md.</p>
+    <div class="row" style="margin-top:10px"><button id="btn-researcher">Запустить исследователя</button></div>
+  </div>
+</div>
+
+<details id="runs-wrap">
+  <summary>Запуски <span id="runs-badge" class="sub"></span></summary>
+  <div class="row" style="margin:8px 0">
+    <button id="btn-vklogin" class="ghost">ВК-логин (сохранить сессию)</button>
+    <span class="sub">лог открывается кнопкой «показать» у записи</span>
+  </div>
+  <table>
+    <thead><tr><th>Запущен</th><th>Тип</th><th>Параметр</th><th>Статус</th><th>Лог</th></tr></thead>
+    <tbody id="r-body"></tbody>
+  </table>
+  <pre id="log" hidden></pre>
+</details>
+
+<div class="note">
+  ТГ-публикация и правки — Bot API: нужен VPN. ВК — UI-автоматизация Playwright: перед первым
+  автопостингом нажми «ВК-логин» и войди в vk.ru в открывшемся окне (сессия сохранится).
+</div>
+
+<!-- всплывающий календарь (общий для всех строк) -->
+<div id="cal" hidden>
+  <div id="cal-head">
+    <button class="ghost" id="cal-prev" onclick="calMonth--;renderCal()">‹</button>
+    <span id="cal-month"></span>
+    <button class="ghost" id="cal-next" onclick="calMonth++;renderCal()">›</button>
+  </div>
+  <div id="cal-dow"></div>
+  <div id="cal-days"></div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+let selRun = null, lastTodoKey = null, lastQueueKey = null, lastDeferKey = null;
+const today = () => new Date().toLocaleDateString("sv-SE"); // YYYY-MM-DD по местному времени
+
+async function j(url, body) {
+  const r = await fetch(url, body ? {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)} : undefined);
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(d.error || r.status);
+  return d;
+}
+
+const LABEL = {draft:"сформирован", pending:"в очереди", publishing:"публикуется", done:"опубликовано",
+               failed:"не удалось", cancelled:"отменено", deferred:"отложено", running:"идёт"};
+function chip(st) { return `<span class="chip ${st}">${LABEL[st] || st}</span>`; }
+
+const esc = s => (s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+function renderProgress(runs, prog) {
+  const active = runs.filter(r => r.status === "running");
+  $("#prog").innerHTML = active.map(r => {
+    const p = prog[r.id] || {percent: 2, stage: "агент запускается…", ts: ""};
+    const lbl = {researcher:"исследователь", producer:"пост", "vk-login":"ВК-логин",
+                 "site-deploy":"сайт"}[r.kind] || r.kind;
+    return `<div class="prog-item">
+      <div class="row" style="justify-content:space-between">
+        <b>${lbl}</b><span class="sub">${esc(r.params || "")}</span>
+      </div>
+      <div class="bar"><i style="width:${Math.min(100, Math.max(2, p.percent))}%"></i></div>
+      <div>${p.percent}% · ${esc(p.stage)} <span class="sub">· с ${fmt(r.started)}</span></div>
+      <div class="sub" style="margin-top:4px">подробно в «Запусках» (лог №${r.id})</div>
+    </div>`;
+  }).join("") || `<div class="sub">ничего не запущено</div>`;
+}
+
+function fmt(s) { return s ? s.replace("T", " ").slice(0, 16) : ""; }
+
+function timeOptions(sel) {
+  const want = sel || "18:00";
+  let out = "";
+  for (let h = 9; h <= 22; h++) {
+    const t = String(h).padStart(2, "0") + ":00";
+    out += `<option value="${t}"${t === want ? " selected" : ""}>${t}</option>`;
+  }
+  return out;
+}
+
+async function refresh() {
+  const s = await j("/api/state");
+  $("#now").textContent = s.now;
+  $("#pub").textContent = s.publisher.busy ? "занят" : "свободен";
+  renderProgress(s.runs, s.progress || {});
+  // опубликованные + их slug'и (чтобы карточки с постом туда не попадали)
+  $("#pub-body").innerHTML = (s.published || []).map(p => {
+    const l = p.links || {};
+    const linksHtml = [l.vk && `<a href="${l.vk}" target="_blank">ВК ↗</a>`,
+                       l.tg && `<a href="${l.tg}" target="_blank">ТГ ↗</a>`,
+                       l.site && `<a href="${l.site}" target="_blank">сайт ↗</a>`].filter(Boolean).join(" · ");
+    return `<tr><td><b>${p.title || ""}</b></td><td class="sub">${p.post.replace("posts/", "").replace("-post.json", "")}</td><td class="sub">${p.published_at}</td><td>${linksHtml || "—"}</td></tr>`;
+  }).join("") || `<tr><td colspan="4" class="sub">пока ничего</td></tr>`;
+  // карточки: неопубликованные — здесь; опубликованные — только в «Опубликованных»
+  const cards = s.cards || [];
+  const todo = cards.filter(c => !c.post && !c.queued);
+  const inQueue = cards.filter(c => c.queued).length;
+  $("#cards-sum").textContent = `— не опубликовано ${todo.length} из ${cards.length}` +
+    (inQueue ? ` · ещё ${inQueue} в очереди` : "");
+  // перерисовка только при изменении состава (иначе сносится открытый календарь/выбор)
+  const key = todo.map(c => c.file).join("|");
+  if (key !== lastTodoKey) {
+    lastTodoKey = key;
+    $("#todo-body").innerHTML = todo.map(c => `
+    <tr>
+      <td>${c.name}${c.type ? ` <span class="sub">${c.type}</span>` : ""}</td>
+      <td class="sub">${c.city || "—"}</td>
+      <td><button class="pc-go" onclick="publishCard(this, '${c.file.replace(/'/g, "\\'")}')">Сформировать пост</button></td>
+    </tr>`).join("") || `<tr><td colspan="3" class="sub">все карточки опубликованы</td></tr>`;
+  }
+  // очередь (опубликованные и отложенные здесь не показываются);
+  // перестраиваем только при изменении (иначе опрос сносит выбор даты/времени/площадок)
+  const qv = s.queue.filter(q => q.status !== "done" && q.status !== "deferred");
+  $("#q-table").hidden = !qv.length;
+  $("#q-empty").hidden = !!qv.length;
+  const qkey = qv.map(q => [q.id, q.status, q.run_at, q.platforms, q.links || "",
+                            q.site_update, q.title || ""].join("~")).join("|");
+  if (qkey !== lastQueueKey) {
+    lastQueueKey = qkey;
+    document.querySelectorAll("tr.pv").forEach(x => x.remove());
+    $("#q-body").innerHTML = qv.map(q => {
+    const draft = q.status === "draft";
+    const plats = JSON.parse(q.platforms || "[]");
+    const links = JSON.parse(q.links || "{}");
+    const linkHtml = Object.values(links).filter(Boolean).map(l => `<a href="${l}" target="_blank">${l}</a>`).join(" · ");
+    const name = q.title || q.post;
+    let whenCell, platsCell, actCell;
+    if (draft) {
+      const d = (q.run_at || "").split(" ")[0] || today();
+      const t = (q.run_at || "").split(" ")[1] || "18:00";
+      whenCell = `<div class="when">
+        <button class="ghost pc-date q-date" data-date="${d}" onclick="openCal(this)">выбор даты</button>
+        <select class="pc-time q-time">${timeOptions(t)}</select>
+      </div>`;
+      platsCell = ["tg", "vk", "site"].map(k => {
+        const lbl = k === "site" ? "Сайт" : (k === "vk" ? "ВК" : "ТГ");
+        const on = k === "site"
+          ? (Number(q.site_update) ? " checked" : "")      // сайт включён по умолчанию
+          : (plats.includes(k) ? " checked" : "");
+        return `<label class="cb" style="margin-right:10px"><input type="checkbox" class="qf" data-k="${k}"${on}> ${lbl}</label>`;
+      }).join("");
+      actCell = `<div class="when" style="gap:6px">
+        <button class="ghost" onclick="inspectPost(this, ${q.id}, '${q.post}')">Проверить</button>
+        <button onclick="publishNow(${q.id})">Опубликовать сейчас</button>
+        <button class="ghost" onclick="qAct(${q.id},'defer')">Отложить</button>
+      </div>`;
+    } else {
+      whenCell = fmt(q.run_at);
+      platsCell = plats.map(p => p === "vk" ? "ВК" : p === "tg" ? "ТГ" : "Сайт").join(", ")
+        + (Number(q.site_update) ? ` <span class="sub">🌐</span>` : "");
+      const det = q.detail && !q.detail.startsWith("ждёт") ? `<div class="sub">${q.detail}</div>` : "";
+      const act = q.status === "failed" || q.status === "cancelled"
+        ? `<button class="ghost" onclick="qAct(${q.id},'retry')">Повторить</button>`
+        : q.status === "pending" ? `<button class="ghost" onclick="qAct(${q.id},'defer')">Отложить</button>` : "";
+      actCell = act;
+      platsCell = platsCell + (det ? "<details><summary>подробно</summary>" + det + "</details>" : "");
+    }
+    return `<tr class="q-row" data-qid="${q.id}">
+      <td><b>${name}</b><span class="sub">${q.city ? `. ${q.city}` : ""}</span>${(q.detail || "").includes("БЕЗ ФОТО") ? ' <span class="chip failed">без фото</span>' : ""}${linkHtml ? `<br>${linkHtml}` : ""}</td>
+      <td style="white-space:nowrap">${whenCell}</td>
+      <td>${platsCell}</td>
+      <td>${actCell}</td>
+    </tr>`;
+    }).join("");
+  }
+  // отложенные (публикатор их не трогает — вернутся кнопкой «Вернуть в очередь»)
+  const dv = s.queue.filter(q => q.status === "deferred");
+  $("#d-table").hidden = !dv.length;
+  $("#d-empty").hidden = !!dv.length;
+  const dkey = dv.map(q => [q.id, q.run_at, q.platforms, q.title || ""].join("~")).join("|");
+  if (dkey !== lastDeferKey) {
+    lastDeferKey = dkey;
+    document.querySelectorAll("#d-body tr.pv").forEach(x => x.remove());
+    $("#d-body").innerHTML = dv.map(q => {
+      const plats = JSON.parse(q.platforms || "[]");
+      const name = q.title || q.post;
+      return `<tr class="q-row" data-qid="${q.id}">
+        <td><b>${name}</b><span class="sub">${q.city ? `. ${q.city}` : ""}</span></td>
+        <td style="white-space:nowrap">${fmt(q.run_at)}</td>
+        <td>${plats.map(p => p === "vk" ? "ВК" : p === "tg" ? "ТГ" : "Сайт").join(", ")}</td>
+        <td><div class="when" style="gap:6px">
+          <button class="ghost" onclick="inspectPost(this, ${q.id}, '${q.post}')">Проверить</button>
+          <button onclick="qAct(${q.id},'resume')">Вернуть в очередь</button>
+        </div></td>
+      </tr>`;
+    }).join("");
+  }
+  // запуски
+  const lbl = {researcher:"исследователь", producer:"пост", "vk-login":"ВК-логин", "site-deploy":"сайт"};
+  const active = s.runs.filter(r => r.status === "running").length;
+  $("#runs-badge").textContent =
+    active ? `— идёт: ${active}` : (s.runs.length ? `— ${s.runs.length} записей` : "");
+  $("#r-body").innerHTML = s.runs.map(r =>
+    `<tr class="runs"><td>${fmt(r.started)}</td><td>${lbl[r.kind] || r.kind}</td><td class="sub">${r.params || "—"}</td><td>${chip(r.status)}${r.exit_code !== null && r.exit_code !== undefined ? ` <span class="sub">код ${r.exit_code}</span>` : ""}</td><td><button class="ghost" onclick="showLog(${r.id})">показать</button></td></tr>`
+  ).join("") || `<tr><td colspan="5" class="sub">запусков ещё не было</td></tr>`;
+  if (selRun && document.querySelector("#log") && !$("#log").hidden) refreshLog(selRun);
+}
+
+window.publishCard = async (btn, file) => {
+  const err = $("#card-err");
+  err.hidden = true;
+  try {
+    const d = await j("/api/publish-card", {file});
+    btn.disabled = true;
+    showLog(d.run);
+  } catch (e) {
+    err.textContent = e.message; err.hidden = false;
+  }
+};
+
+// ---- всплывающий календарь (текущий год, дефолт — сегодня) ----
+const MONTHS = ["Январь","Февраль","Март","Апрель","Май","Июнь",
+                "Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
+const DOW = ["пн","вт","ср","чт","пт","сб","вс"];
+let calBtn = null, calMonth = new Date().getMonth();
+
+function openCal(btn) {
+  calBtn = btn;
+  calMonth = (new Date(btn.dataset.date + "T00:00:00")).getMonth();
+  renderCal();
+  const r = btn.getBoundingClientRect(), c = $("#cal");
+  c.hidden = false;
+  requestAnimationFrame(() => {
+    const rect = c.getBoundingClientRect();
+    let top = r.bottom + 6, left = r.left;
+    if (top + rect.height > innerHeight - 8) top = r.top - rect.height - 6;
+    if (left + rect.width > innerWidth - 8) left = innerWidth - rect.width - 8;
+    c.style.top = Math.max(8, top) + "px";
+    c.style.left = Math.max(8, left) + "px";
+  });
+}
+
+function renderCal() {
+  if (!$("#cal-dow").innerHTML)
+    $("#cal-dow").innerHTML = DOW.map(d => `<span>${d}</span>`).join("");
+  const now = new Date(), year = now.getFullYear();
+  const first = new Date(year, calMonth, 1);
+  const offset = (first.getDay() + 6) % 7;           // пн = 0
+  const days = new Date(year, calMonth + 1, 0).getDate();
+  const sel = calBtn ? calBtn.dataset.date : "";
+  let html = "";
+  for (let i = 0; i < offset; i++) html += "<span></span>";
+  for (let d = 1; d <= days; d++) {
+    const iso = `${year}-${String(calMonth + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    html += `<button${iso === sel ? ' class="sel"' : ''} onclick="pickDay('${iso}')">${d}</button>`;
+  }
+  $("#cal-days").innerHTML = html;
+  $("#cal-month").textContent = `${MONTHS[calMonth]} ${year}`;
+  $("#cal-prev").disabled = calMonth === 0;   // в году — 12 месяцев, наружу нельзя
+  $("#cal-next").disabled = calMonth === 11;
+}
+
+function pickDay(iso) {
+  if (calBtn) calBtn.dataset.date = iso;   // дата живёт в data-атрибуте, надпись не меняется
+  $("#cal").hidden = true;
+}
+
+window.openCal = openCal;
+window.pickDay = pickDay;
+
+// клик мимо календаря — закрыть (клик по кнопке даты обрабатывает openCal сам)
+document.addEventListener("click", e => {
+  const c = $("#cal");
+  if (c.hidden) return;
+  if (e.target.closest("#cal") || e.target.closest(".pc-date")) return;
+  c.hidden = true;
+});
+
+async function showLog(id) {
+  selRun = id; $("#log").hidden = false; $("#runs-wrap").open = true; await refreshLog(id);
+}
+
+async function refreshLog(id) {
+  const d = await j("/api/log?run=" + id);
+  $("#log").textContent = d.log;
+  $("#log").scrollTop = $("#log").scrollHeight;
+  document.querySelectorAll("#r-body button.ghost").forEach(b => b.style.outline = "");
+}
+
+window.qAct = async (id, action) => {
+  try { await j("/api/queue/action", {id, action}); refresh(); }
+  catch (e) { alert(e.message); }
+};
+
+window.publishNow = async (id) => {
+  const row = document.querySelector(`tr.q-row[data-qid="${id}"]`);
+  if (!row) return;
+  const dt = new Date();
+  const now = dt.getFullYear() + "-" + String(dt.getMonth() + 1).padStart(2, "0") + "-" +
+              String(dt.getDate()).padStart(2, "0") + " " +
+              String(dt.getHours()).padStart(2, "0") + ":" + String(dt.getMinutes()).padStart(2, "0");
+  const plats = [...row.querySelectorAll(".qf:checked")].map(c => c.dataset.k).filter(k => k !== "site");
+  const site = row.querySelector('.qf[data-k="site"]')?.checked ? 1 : 0;
+  if (!plats.length) { alert("Выбери хотя бы одну площадку: ТГ или ВК (или только «Сайт»)."); return; }
+  try {
+    await j("/api/queue/confirm", {id, run_at: now, platforms: plats, site_update: site});
+    refresh();
+  } catch (e) { alert(e.message); }
+};
+
+window.inspectPost = async (btn, qid, post) => {
+  const tr = btn.closest("tr");
+  const open = tr.nextElementSibling;
+  if (open && open.classList.contains("pv")) { open.remove(); return; }  // тоггл
+  document.querySelectorAll("tr.pv").forEach(x => x.remove());
+  try {
+    const d = await j("/api/post-view?post=" + encodeURIComponent(post));
+    const imgs = d.images.map(im => `
+      <figure><img src="api/asset?name=${encodeURIComponent(im.file)}" alt="">
+        ${im.what || im.credit ? `<figcaption>${esc(im.what || im.credit)}</figcaption>` : ""}</figure>`).join("");
+    const row = document.createElement("tr");
+    row.className = "pv";
+    row.innerHTML = `<td colspan="4">
+      <b>${esc(d.title)}</b> <span class="sub">${esc(d.rubric ? "· " + d.rubric : "")}${d.city ? " · " + esc(d.city) : ""}</span>
+      <div class="cols">
+        <div><h4>ВКонтакте</h4><div class="txt">${esc(d.vk) || "—"}</div></div>
+        <div><h4>Телеграм (подпись)</h4><div class="txt">${esc(d.tg) || "—"}</div></div>
+      </div>
+      <h4>Картинки (${d.images.length})</h4>
+      <div class="imgs">${imgs || '<span class="sub">картинок нет</span>'}</div>
+    </td>`;
+    tr.after(row); row.scrollIntoView({block: "nearest", behavior: "smooth"});
+  } catch (e) { alert(e.message); }
+};
+
+$("#btn-researcher").onclick = async () => {
+  try { const d = await j("/api/researcher"); showLog(d.run); } catch (e) { alert(e.message); }
+};
+$("#btn-deploy").onclick = async () => {
+  try {
+    const d = await j("/api/site-deploy");
+    showLog(d.run);
+  } catch (e) { alert(e.message); }
+};
+$("#btn-vklogin").onclick = async () => {
+  try { const d = await j("/api/vk-login"); showLog(d.run);
+    alert("Откроется окно Edge — войди в vk.ru вручную. Статус появится в разделе «Запуски».");
+  } catch (e) { alert(e.message); }
+};
+
+setInterval(refresh, 3000);
+refresh();
+</script>

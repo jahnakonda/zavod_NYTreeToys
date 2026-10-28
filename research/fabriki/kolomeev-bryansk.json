@@ -1,0 +1,42 @@
+{
+  "schema_version": "nytoys-fabrika-card/v1",
+  "type": "фабрика",
+  "name": "Фабрика «Коломеев»",
+  "city": "Брянск, Новозыбков (цех росписи — Калуга)",
+  "region": "Брянская область, Калужская область",
+  "technique": [
+    "стекло, ручная выдувка",
+    "металлизация",
+    "окраска",
+    "ручная роспись"
+  ],
+  "since": null,
+  "about": "Один из крупнейших российских производителей ёлочных игрушек из стекла. Полный цикл: ручная выдувка из стеклодротов, металлизация, окраска, ручная роспись. Позиционирует себя как «фабрика новогоднего настроения».",
+  "sites": [
+    "https://kolomeev.ru/"
+  ],
+  "social": {
+    "vk": "https://vk.com/kolomeev_ru",
+    "telegram": "https://t.me/kolomeev",
+    "other": [
+      "Дзен: https://dzen.ru/kolomeev",
+      "ОК: https://ok.ru/group/70000001228540",
+      "YouTube: https://www.youtube.com/channel/UCD4Iv8svbvzw7GVRrMRZJCA"
+    ]
+  },
+  "buy": "Интернет-магазин на сайте; бренд в ритейле (напр. ВкусВилл, vprok.ru); контакты +7 (495) 755-94-04, info@kolomeev.ru",
+  "tours": null,
+  "facts": [
+    "Более 170 сотрудников, более 10 000 товарных позиций",
+    "Производственные площадки: Брянск и Новозыбков, цех авторской росписи в Калуге"
+  ],
+  "posts_done": [
+    "posts/2026-10-28-kolomeev-post.json (ВК wall-242169556_7, ТГ msg 13, 28.10)"
+  ],
+  "status": "проверено",
+  "updated": "2026-10-28",
+  "sources": [
+    "https://kolomeev.ru/",
+    "https://kolomeev.ru/manufacturing"
+  ]
+}

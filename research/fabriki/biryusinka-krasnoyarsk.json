@@ -1,0 +1,37 @@
+{
+  "schema_version": "nytoys-fabrika-card/v1",
+  "type": "фабрика",
+  "name": "ЗАО «Красноярская фирма Бирюсинка»",
+  "city": "Красноярск",
+  "region": "Красноярский край",
+  "technique": ["стекло, ручная выдувка", "металлизация", "ручная роспись"],
+  "since": "1929 (артель) / 1959 (стеклодувный цех)",
+  "about": "Единственная за Уралом фабрика стеклянных ёлочных игрушек ручной работы. История с 1929 (артель), стеклодувный цех — с 1959, имя «Бирюсинка» — с 1989.",
+  "sites": ["https://birusinka24.ru/"],
+  "social": { "vk": "https://vk.com/birusinkatoys", "telegram": "https://t.me/birusinka_124", "other": [] },
+  "buy": "Интернет-магазин birusinka24.ru; фирменный магазин: Красноярск, ул. Дудинская, 12а; тел. +7 (391) 201-87-13, info@birusinka.ru (домены biryusinka.ru/birusinka.ru не отвечают)",
+  "tours": "Экскурсия по цехам ~1 час (стеклодувы, металлизация, роспись, цехи мягкой и ПВХ-игрушки, фирменный магазин); запись по тел. +7 (391) 201-87-13 или через экскурсионные бюро (билет 600–1400 ₽/чел)",
+  "facts": [
+    "В России таких старых производств всего три: «Бирюсинка», «Ёлочка» (Клин) и «Ариель» (Нижний Новгород)",
+    "Игрушки выдувают на керосиновых горелках (~900 °C), покрывают алюминием в вакууме, расписывают вручную",
+    "Серии о Сибири: шары со Столбами и местной фауной",
+    "В СССР в стеклодувном цехе работало 90 человек в три смены; после 1991 производство сократилось в 17 раз",
+    "Кроме стекла выпускает игрушки из ПВХ и мягкие игрушки",
+    "Именные шары с надписью — от ~550–600 ₽"
+  ],
+  "posts_done": [
+    "2026-10-11-biryusinka-post.json (история-игрушки; цены экскурсия/именной шар — owner-verified из бюро). Опубликовано 2026-10-11: ВК wall-242169556_4 (gen + 3 фото), ТГ t.me/nytreetoys/7 (медиагруппа 4 фото, подпись на gen-картинке)"
+  ],
+  "status": "черновик",
+  "updated": "2026-10-11",
+  "sources": [
+    "https://gnkk.ru/articles/kak-rabotaet-stareyshaya-fabrika-novog/",
+    "https://ngs24.ru/text/job/2023/12/03/72959897/",
+    "https://www.kommersant.ru/gallery/8295042",
+    "https://krsk.aif.ru/ny/iz_stekla_ognya_i_vozduha_kak_mastera-stekloduvy_delayut_yolochnye_igrushki",
+    "https://birusinka24.ru/",
+    "https://t.me/birusinka_124",
+    "https://excurs.org/excursions/russia/krasnoyarsk/fabrika-igrusek-biryusinka",
+    "https://sunlife-travel.ru/tour/masterskaya-skazki-fabrika-igrushek-biryusinka/"
+  ]
+}
